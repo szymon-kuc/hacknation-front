@@ -22,7 +22,7 @@ export default function FoundListPage() {
           const payload = await response.json();
           const items: IEventItem[] = Array.isArray(payload) ? payload : payload?.foundItems || [];
           if (items.length > 0) {
-            setFoundItems(items); 
+            setFoundItems(items);
           }
         } catch (error) {
           if (controller.signal.aborted) return;
@@ -40,8 +40,8 @@ export default function FoundListPage() {
       <div className="container">
         <div className="main-found-list">
           <h1 className="main-found-list__title">Lista rzeczy znalezionych</h1>
-          <Search setFoundItems={setFoundItems} />
-          {(foundItems && foundItems.length > 0) && <List foundItems={foundItems} />}
+            <Search setFoundItems={setFoundItems} />
+          {(foundItems && foundItems.length > 0) && <List foundItems={foundItems} isOfficial={false}/>}
         </div>
       </div>
     </main>
