@@ -2,43 +2,63 @@
     "foundItems": [
         {
             "id": 1,
-            "name": "Iphone 16 pro uszkodzony",
+            "itemName": "Iphone 16 pro uszkodzony",
+            "description": "This is a sample item description.",
+            "documentTransferDate": "2024-06-01",
+            "entryDate": "2024-06-01",
+            "foundDate": "2024-06-02",
+            "issueNumber": "123456",
+            "whereStorred": "Autobus",
+            "whereFound": "Autobus",
             "type": "Telefon komórkowy",
-            "dateFound": "2024-06-01",
-            "datePublish": "2024-06-02",
+            "status": "Telefon komórkowy",
             "voivodeship": "Śląskie",
-            "locationFound": "Autobus",
-            "description": "This is a sample item description."
+            "issuer": "Telefon komórkowy"
         },
         {
             "id": 2,
-            "name": "Portfel",
-            "type": "Portfel",
-            "dateFound": "2025-03-07",
-            "datePublish": "2025-03-07",
+            "itemName": "Iphone 16 pro uszkodzony",
+            "description": "This is a sample item description.",
+            "documentTransferDate": "2024-06-01",
+            "entryDate": "2024-06-01",
+            "foundDate": "2024-06-02",
+            "issueNumber": "123456",
+            "whereStorred": "Autobus",
+            "whereFound": "Autobus",
+            "type": "Telefon komórkowy",
+            "status": "Telefon komórkowy",
             "voivodeship": "Śląskie",
-            "locationFound": "Autobus",
-            "description": "This is a sample item description."
+            "issuer": "Telefon komórkowy"
         },
         {
             "id": 3,
-            "name": "Iphone 16",
+            "itemName": "Iphone 16 pro uszkodzony",
+            "description": "This is a sample item description.",
+            "documentTransferDate": "2024-06-01",
+            "entryDate": "2024-06-01",
+            "foundDate": "2024-06-02",
+            "issueNumber": "123456",
+            "whereStorred": "Autobus",
+            "whereFound": "Autobus",
             "type": "Telefon komórkowy",
-            "dateFound": "2024-06-01",
-            "datePublish": "2024-06-02",
+            "status": "Telefon komórkowy",
             "voivodeship": "Śląskie",
-            "locationFound": "Autobus",
-            "description": "This is a sample item description."
+            "issuer": "Telefon komórkowy"
         },
         {
             "id": 4,
-            "name": "Samsung galaxy",
+            "itemName": "Iphone 16 pro uszkodzony",
+            "description": "This is a sample item description.",
+            "documentTransferDate": "2024-06-01",
+            "entryDate": "2024-06-01",
+            "foundDate": "2024-06-02",
+            "issueNumber": "123456",
+            "whereStorred": "Autobus",
+            "whereFound": "Autobus",
             "type": "Telefon komórkowy",
-            "dateFound": "2024-06-01",
-            "datePublish": "2024-06-02",
+            "status": "Telefon komórkowy",
             "voivodeship": "Śląskie",
-            "locationFound": "Autobus",
-            "description": "This is a sample item description."
+            "issuer": "Telefon komórkowy"
         }
     ]
 }

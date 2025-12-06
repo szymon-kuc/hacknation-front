@@ -1,10 +1,15 @@
 export interface IEventItem {
     id: number;
-    name: string;
+    itemName: string;
     description: string;
-    dateFound: string;
-    locationFound: string;
+    documentTransferDate: string;
+    entryDate: string;
+    foundDate: string;
+    issueNumber: string;
+    whereStorred: string;
+    whereFound: null | string;
     type: string;
-    datePublish: string;
+    status: string;
     voivodeship: string;
+    issuer: string;
 }

@@ -17,12 +17,12 @@ export default function List({ foundItems }: { foundItems: IEventItem[] }) {
             {foundItems.map((item) => (
                 <div key={item.id} className="found-list__item">
                     <div className="found-list__item__cell found-list__item__cell--id">{item.id}</div>
-                    <div className="found-list__item__cell found-list__item__cell--name">{item.name}</div>
+                    <div className="found-list__item__cell found-list__item__cell--name">{item.itemName}</div>
                     <div className="found-list__item__cell found-list__item__cell--description">{item.description}</div>
                     <div className="found-list__item__cell found-list__item__cell--type">{item.type}</div>
-                    <div className="found-list__item__cell found-list__item__cell--dateFound">{item.dateFound}</div>
-                    <div className="found-list__item__cell found-list__item__cell--datePublish">{item.datePublish}</div>
-                    <div className="found-list__item__cell found-list__item__cell--locationFound">{item.locationFound}</div>
+                    <div className="found-list__item__cell found-list__item__cell--dateFound">{item.foundDate}</div>
+                    <div className="found-list__item__cell found-list__item__cell--datePublish">{item.entryDate}</div>
+                    <div className="found-list__item__cell found-list__item__cell--locationFound">{item.whereFound}</div>
                     <div className="found-list__item__cell found-list__item__cell--voivodeship">{item.voivodeship}</div>
                 </div>
             ))}
