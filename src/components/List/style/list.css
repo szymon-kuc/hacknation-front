@@ -1,0 +1,8 @@
+.found-list {
+  display: flex;
+  flex-direction: column;
+}
+.found-list__item {
+  display: grid;
+  grid-template-columns: repeat(8, auto);
+}/*# sourceMappingURL=list.css.map */
