@@ -3,3 +3,91 @@
     padding: 0;
     margin: 0;
 }
+
+.container {
+  max-width: 1670px;
+  margin: 0 auto;
+  padding: 0 40px;
+}
+
+/* --- Official form styles --- */
+.official-form {
+  margin-top: 24px;
+}
+
+.official-form form {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+.official-form .form-row {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.official-form label {
+  font-size: 14px;
+  color: #222;
+}
+
+.official-form input,
+.official-form select,
+.official-form textarea {
+  width: 100%;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px; /* lekkie zaokrąglenie */
+  background: #fff;
+  color: #111;
+  padding: 10px 12px;
+}
+
+/* Ustalona wysokość 46px dla inputów i selectów */
+.official-form input,
+.official-form select {
+  height: 46px;
+}
+
+/* Textarea nie ma sztywnej wysokości, ale spójne obramowanie i możliwość zmiany rozmiaru w pionie */
+.official-form textarea {
+  min-height: 120px;
+  line-height: 1.4;
+  resize: vertical;
+}
+
+.official-form input:focus,
+.official-form select:focus,
+.official-form textarea:focus {
+  outline: none;
+  border-color: rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0 3px rgba(0, 0, 0, 0.06);
+}
+
+.official-form .form-actions {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-start;
+  margin-top: 8px;
+}
+
+.official-form .form-actions button {
+  height: 46px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  background: #111;
+  color: #fff;
+  cursor: pointer;
+}
+
+.official-form .form-actions button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* komunikaty błędów walidacji */
+.official-form .error-text {
+  color: #c0392b;
+  font-size: 13px;
+}
