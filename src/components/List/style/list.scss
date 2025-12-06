@@ -1,0 +1,9 @@
+.found-list {
+    display: flex;
+    flex-direction: column;
+
+    &__item {
+        display: grid;
+        grid-template-columns: repeat(8, auto);
+    }
+}
