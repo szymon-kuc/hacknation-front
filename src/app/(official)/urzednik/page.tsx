@@ -4,21 +4,23 @@ import List from "@/components/List/List";
 import {IEventItem} from "@/types/types";
 import dataExample from "@/app/(public)/lista-znalezionych/data.json";
 import {useAuth} from "@/context/AuthContext";
+import Login from "@/components/Login/Login";
+import {useState} from "react";
+import '@/styles/urzednik/style.css'
 
 const Page = () => {
-    const {foundItems} : {foundItems: IEventItem[]} = dataExample
-    const  {isAuthenticated, login} = useAuth();
-    console.log(isAuthenticated);
+    const [foundItems, setFoundItems] = useState<IEventItem[]>(dataExample.foundItems)
 
-    const handleLogin = () => {
-        login();
-        console.log(isAuthenticated);
-    }
+    const  {isAuthenticated} = useAuth();
+
     return (
         <div className="container">
-            {/*isOfficial=true do dodania*/}
-            <List foundItems={foundItems} />
-            <div className="btn" onClick={handleLogin}>Logowanie</div>
+            {isAuthenticated ? <>
+                <List setFoundItems={setFoundItems} foundItems={foundItems} isOfficial={true} />
+            </> : <>
+                <Login />
+            </>}
+
         </div>
     )
 }

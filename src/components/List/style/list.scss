@@ -3,29 +3,34 @@
     flex-direction: column;
 
     &__item {
-        display: grid;
-        grid-template-columns: 40px 200px 200px 100px 100px 100px 100px 110px;
-        border: 1px solid rgba(0, 0, 0, 0.1);
-        font-size: 14px;
+        display: flex;
 
         &--heading {
             font-weight: 600;
             // text-align: center;
         }
 
+      &__cell:first-child{
+        width: 5%;
+      }
+
         &__cell {
             display: flex;
+          width: 13%;
             align-items: center;
             // justify-content: center;
             padding: 10px;
 
-            & + & {
-                border-left: 1px solid rgba(0, 0, 0, 0.1);
-            }
+
         }
 
-        & + & {
-            border-top: none;
-        }
+      &__cell--actions {
+        gap: 10px;
+      }
+
     }
+
+  &__item:nth-child(odd){
+    background: #eee;
+  }
 }

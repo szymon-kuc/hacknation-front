@@ -1,15 +1,22 @@
-import '@/components/header/style/header.css';
+import '@/components/Header/style/header.css';
 import Link from "next/link";
 const HeaderOfficial = () => {
     return (
         <header className="header">
-            <div >Biuro rzeczy znalezionych</div>
+            <Link className="header-text" href="/">Biuro rzeczy znalezionych</Link>
             <nav>
                 <ul>
                     <li>
                         <Link href={`/urzednik`}>Lista przedmiotów</Link>
+
+                    </li>
+                    <li>
                         <Link href={`/urzednik/dodaj`}>Dodoaj przedmiot</Link>
+                    </li>
+                    <li>
                         <Link href={`/import`}>Importuj z pliku</Link>
+                    </li>
+                    <li>
                         <Link href={`/archiwum`}>Archiwum</Link>
                     </li>
                 </ul>

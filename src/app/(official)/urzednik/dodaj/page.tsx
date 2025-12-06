@@ -1,268 +1,207 @@
 "use client";
 
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import {useAuth} from "@/context/AuthContext";
+import {notFound} from "next/navigation";
 
-type Errors = Partial<{
-    foundDate: string;
-    category: string;
-    description: string;
-    location: string;
-}>;
-
-// Prosta funkcja sanityzująca: usuwa znaczniki HTML, kontrolne znaki i zwija białe znaki.
-const sanitizeText = (input: string): string => {
-    if (!input) return "";
-    // strip HTML tags using the browser parser
-    const div = typeof window !== "undefined" ? document.createElement("div") : null;
-    const text = (() => {
-        if (div) {
-            div.innerHTML = input;
-            return div.textContent || div.innerText || "";
-        }
-        return input;
-    })();
-    // remove control characters except newline and tab, collapse whitespace, trim
-    return text
-        .replace(/[\u0000-\u001F\u007F]/g, " ")
-        .replace(/\s+/g, " ")
-        .trim();
-};
-
-// Walidatory pól
+// Limity pól
 const MAX = {
     category: 100,
     location: 50,
     description: 400,
 };
 
-const validateFoundDate = (value: string): string => {
-    if (!value) return "Data jest wymagana";
-    const selected = new Date(value);
-    const today = new Date();
-    // porównuj tylko część daty (bez czasu)
-    selected.setHours(0, 0, 0, 0);
-    today.setHours(0, 0, 0, 0);
-    if (selected > today) return "Data nie może być w przyszłości";
-    return "";
-};
+// Prosta funkcja sanityzująca dane (kontrolne znaki, < >, trim)
+const sanitize = (v: string) =>
+    (v || "")
+        .replace(/[\u0000-\u001F\u007F]/g, "")
+        .replace(/[<>]/g, "")
+        .trim();
 
-const validateRequiredLen = (label: string, value: string, max: number): string => {
-    if (!value || !value.trim()) return `${label} jest wymagane`;
-    if (value.length > max) return `${label} nie może przekraczać ${max} znaków`;
-    return "";
-};
+// Walidacja Yup, w tym data nie późniejsza niż dziś
+const validationSchema = Yup.object({
+    foundDate: Yup.string()
+        .required("Data jest wymagana")
+        .test("not-in-future", "Data nie może być w przyszłości", (value) => {
+            if (!value) return false;
+            const selected = new Date(value);
+            const today = new Date();
+            selected.setHours(0, 0, 0, 0);
+            today.setHours(0, 0, 0, 0);
+            return selected.getTime() <= today.getTime();
+        }),
+    category: Yup.string()
+        .required("Kategoria jest wymagana")
+        .max(MAX.category, `Kategoria nie może przekraczać ${MAX.category} znaków`),
+    description: Yup.string()
+        .required("Opis jest wymagany")
+        .max(MAX.description, `Opis nie może przekraczać ${MAX.description} znaków`),
+    location: Yup.string()
+        .required("Miejsce jest wymagane")
+        .max(MAX.location, `Miejsce nie może przekraczać ${MAX.location} znaków`),
+});
 
 const Page = () => {
-    const [foundDate, setFoundDate] = useState<string>("");
-    const [category, setCategory] = useState<string>("");
-    const [description, setDescription] = useState<string>("");
-    const [location, setLocation] = useState<string>("");
-    const [errors, setErrors] = useState<Errors>({});
-    const [loading, setLoading] = useState<boolean>(false);
 
-    const isInvalid = useMemo(() => Object.values(errors).some(Boolean), [errors]);
+    const {isAuthenticated} = useAuth();
 
-    const validateAll = (): Errors => {
-        const e: Errors = {};
-        e.foundDate = validateFoundDate(foundDate);
-        e.category = validateRequiredLen("Kategoria", category, MAX.category);
-        e.description = validateRequiredLen("Opis", description, MAX.description);
-        e.location = validateRequiredLen("Miejsce", location, MAX.location);
-        Object.keys(e).forEach((k) => {
-            // @ts-ignore
-            if (!e[k]) delete e[k];
-        });
-        return e;
+    if(!isAuthenticated) return notFound();
+
+    const [serverError, setServerError] = useState<string | null>(null);
+    const [serverSuccess, setServerSuccess] = useState<string | null>(null);
+
+    const initialValues = {
+        foundDate: "",
+        category: "",
+        description: "",
+        location: "",
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        // Walidacja
-        const currentErrors = validateAll();
-        if (Object.keys(currentErrors).length > 0) {
-            setErrors(currentErrors);
-            return;
-        }
-
-        setLoading(true);
+    const onSubmit = async (
+        values: typeof initialValues,
+        { setSubmitting, resetForm }: { setSubmitting: (s: boolean) => void; resetForm: () => void }
+    ) => {
+        setServerError(null);
+        setServerSuccess(null);
         try {
-            // Sanityzacja pól przed wysyłką
             const payload = {
-                foundDate: sanitizeText(foundDate),
-                category: sanitizeText(category),
-                description: sanitizeText(description),
-                location: sanitizeText(location),
+                foundDate: sanitize(values.foundDate),
+                category: sanitize(values.category),
+                description: sanitize(values.description),
+                location: sanitize(values.location),
             };
 
             const token =
-                typeof window !== "undefined"
-                    ? localStorage.getItem("token") || localStorage.getItem("authToken") || process.env.NEXT_PUBLIC_TOKEN || ""
-                    : process.env.NEXT_PUBLIC_TOKEN || "";
+                (typeof window !== "undefined" && (localStorage.getItem("token") || localStorage.getItem("authToken"))) ||
+                process.env.NEXT_PUBLIC_TOKEN ||
+                "";
 
             if (!token) {
-                alert("Brak tokenu autoryzacyjnego. Zaloguj się ponownie.");
-                setLoading(false);
-                return;
+                throw new Error("Brak tokenu autoryzacyjnego. Zaloguj się ponownie.");
             }
 
-            const baseUrl = process.env.NEXT_PUBLIC_API_URL || ""; // np. https://api.twojadomena.pl
-            console.log(payload)
-            // const url = `${baseUrl}/api/lost-items`;
-            //
-            // const res = await fetch(url, {
-            //   method: "POST",
-            //   headers: {
-            //     "Content-Type": "application/json",
-            //     Authorization: `Bearer ${token}`,
-            //   },
-            //   body: JSON.stringify(payload),
-            // });
-            //
-            // if (!res.ok) {
-            //   const msg = await res.text();
-            //   throw new Error(msg || `Błąd zapisu (${res.status})`);
-            // }
+            const base = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
+            const url = `${base}/api/lost-items`;
 
-            setFoundDate("");
-            setCategory("");
-            setDescription("");
-            setLocation("");
-            setErrors({});
+            const res = await fetch(url, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${token}`,
+                },
+                body: JSON.stringify(payload),
+            });
 
-            alert("Pomyślnie zapisano rzecz znalezioną.");
-        } catch (err: any) {
-            console.error(err);
-            alert(`Nie udało się zapisać: ${err?.message || "nieznany błąd"}`);
+            const data = await res.json().catch(() => ({} as any));
+
+            if (!res.ok) {
+                const msg = (data && (data.message || data.error)) || `Błąd zapisu (${res.status})`;
+                throw new Error(msg);
+            }
+
+            setServerSuccess("Pomyślnie zapisano rzecz znalezioną.");
+            resetForm();
+        } catch (e: any) {
+            setServerError(e?.message || "Nie udało się zapisać.");
         } finally {
-            setLoading(false);
+            setSubmitting(false);
         }
     };
 
     return (
         <div className="container">
-            <h1 className="section-title">Wprowadź dane rzeczy znalezionej:</h1>
-            <div className="official-form">
-                <form onSubmit={handleSubmit} noValidate>
-                    <div className="form-row">
-                        <label htmlFor="foundDate">Data znalezienia</label>
-                        <input
-                            id="foundDate"
-                            type="date"
-                            value={foundDate}
-                            onChange={(e) => {
-                                setFoundDate(e.target.value);
-                                setErrors((prev) => ({ ...prev, foundDate: undefined }));
-                            }}
-                            onBlur={() =>
-                                setErrors((prev) => ({ ...prev, foundDate: validateFoundDate(foundDate) || undefined }))
-                            }
-                            required
-                            aria-invalid={Boolean(errors.foundDate)}
-                            aria-describedby={errors.foundDate ? "foundDate-error" : undefined}
-                        />
-                        {errors.foundDate && (
-                            <span id="foundDate-error" className="error-text" role="alert">
-                {errors.foundDate}
-              </span>
-                        )}
-                    </div>
 
-                    <div className="form-row">
-                        <label htmlFor="category">Kategoria / rodzaj</label>
-                        <input
-                            id="category"
-                            type="text"
-                            placeholder="np. Elektronika, Dokumenty, Klucze"
-                            value={category}
-                            onChange={(e) => {
-                                // proste ograniczenie znaków i usunięcie <>
-                                const raw = e.target.value.replace(/[<>]/g, "");
-                                if (raw.length <= MAX.category) setCategory(raw);
-                                setErrors((prev) => ({ ...prev, category: undefined }));
-                            }}
-                            onBlur={() =>
-                                setErrors((prev) => ({ ...prev, category: validateRequiredLen("Kategoria", category, MAX.category) || undefined }))
-                            }
-                            required
-                            autoComplete="off"
-                            inputMode="text"
-                            maxLength={MAX.category}
-                            aria-invalid={Boolean(errors.category)}
-                            aria-describedby={errors.category ? "category-error" : undefined}
-                        />
-                        {errors.category && (
-                            <span id="category-error" className="error-text" role="alert">
-                {errors.category}
-              </span>
-                        )}
-                    </div>
+            <div className="official-form form">
+                <h1 className="section-title">Wprowadź dane:</h1>
+                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+                    {({ isSubmitting, isValid, touched, errors }) => (
+                        <Form noValidate>
+                            {serverError && (
+                                <div className="error-text" role="alert">{serverError}</div>
+                            )}
+                            {serverSuccess && (
+                                <div style={{ color: "#2e7d32", fontSize: 14 }}>{serverSuccess}</div>
+                            )}
 
-                    <div className="form-row">
-                        <label htmlFor="description">Opis</label>
-                        <textarea
-                            id="description"
-                            placeholder="Krótki opis rzeczy"
-                            value={description}
-                            onChange={(e) => {
-                                const raw = e.target.value.replace(/[<>]/g, "");
-                                if (raw.length <= MAX.description) setDescription(raw);
-                                setErrors((prev) => ({ ...prev, description: undefined }));
-                            }}
-                            onBlur={() =>
-                                setErrors((prev) => ({ ...prev, description: validateRequiredLen("Opis", description, MAX.description) || undefined }))
-                            }
-                            required
-                            rows={4}
-                            maxLength={MAX.description}
-                            aria-invalid={Boolean(errors.description)}
-                            aria-describedby={errors.description ? "description-error" : undefined}
-                        />
-                        {errors.description && (
-                            <span id="description-error" className="error-text" role="alert">
-                {errors.description}
-              </span>
-                        )}
-                    </div>
+                            <div className="form-row">
+                                <label htmlFor="foundDate">Data znalezienia</label>
+                                <Field
+                                    id="foundDate"
+                                    name="foundDate"
+                                    type="date"
+                                    aria-invalid={touched.foundDate && !!errors.foundDate}
+                                    aria-describedby="foundDate-error"
+                                    as="input"
+                                />
+                                <ErrorMessage name="foundDate" render={(msg) => (
+                                    <div id="foundDate-error" className="error-text">{msg}</div>
+                                )} />
+                            </div>
 
-                    <div className="form-row">
-                        <label htmlFor="location">Miejsce znalezienia</label>
-                        <input
-                            id="location"
-                            type="text"
-                            placeholder="Gdzie znaleziono rzecz"
-                            value={location}
-                            onChange={(e) => {
-                                const raw = e.target.value.replace(/[<>]/g, "");
-                                if (raw.length <= MAX.location) setLocation(raw);
-                                setErrors((prev) => ({ ...prev, location: undefined }));
-                            }}
-                            onBlur={() =>
-                                setErrors((prev) => ({ ...prev, location: validateRequiredLen("Miejsce", location, MAX.location) || undefined }))
-                            }
-                            required
-                            autoComplete="off"
-                            inputMode="text"
-                            maxLength={MAX.location}
-                            aria-invalid={Boolean(errors.location)}
-                            aria-describedby={errors.location ? "location-error" : undefined}
-                        />
-                        {errors.location && (
-                            <span id="location-error" className="error-text" role="alert">
-                {errors.location}
-              </span>
-                        )}
-                    </div>
+                            <div className="form-row">
+                                <label htmlFor="category">Kategoria / rodzaj</label>
+                                <Field
+                                    id="category"
+                                    name="category"
+                                    type="text"
+                                    placeholder="np. Elektronika, Dokumenty, Klucze"
+                                    maxLength={MAX.category}
+                                    aria-invalid={touched.category && !!errors.category}
+                                    aria-describedby="category-error"
+                                    as="input"
+                                />
+                                <ErrorMessage name="category" render={(msg) => (
+                                    <div id="category-error" className="error-text">{msg}</div>
+                                )} />
+                            </div>
 
-                    <div className="form-actions">
-                        <button type="submit" disabled={loading || isInvalid}>
-                            {loading ? "Wysyłanie..." : "Zapisz"}
-                        </button>
-                    </div>
-                </form>
+                            <div className="form-row">
+                                <label htmlFor="description">Opis</label>
+                                <Field
+                                    id="description"
+                                    name="description"
+                                    as="textarea"
+                                    rows={4}
+                                    placeholder="Krótki opis rzeczy"
+                                    maxLength={MAX.description}
+                                    aria-invalid={touched.description && !!errors.description}
+                                    aria-describedby="description-error"
+                                />
+                                <ErrorMessage name="description" render={(msg) => (
+                                    <div id="description-error" className="error-text">{msg}</div>
+                                )} />
+                            </div>
+
+                            <div className="form-row">
+                                <label htmlFor="location">Miejsce znalezienia</label>
+                                <Field
+                                    id="location"
+                                    name="location"
+                                    type="text"
+                                    placeholder="Gdzie znaleziono rzecz"
+                                    maxLength={MAX.location}
+                                    aria-invalid={touched.location && !!errors.location}
+                                    aria-describedby="location-error"
+                                    as="input"
+                                />
+                                <ErrorMessage name="location" render={(msg) => (
+                                    <div id="location-error" className="error-text">{msg}</div>
+                                )} />
+                            </div>
+
+                            <div className="form-actions">
+                                <button type="submit" disabled={isSubmitting || !isValid}>
+                                    {isSubmitting ? "Wysyłanie..." : "Zapisz"}
+                                </button>
+                            </div>
+                        </Form>
+                    )}
+                </Formik>
             </div>
         </div>
     );
 };
 
-export default Page
+export default Page;

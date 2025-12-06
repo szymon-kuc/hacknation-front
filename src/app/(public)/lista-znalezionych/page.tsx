@@ -12,7 +12,7 @@ export default function FoundListPage() {
       <div className="container">
         <div className="main-found-list">
           <h1 className="main-found-list__title">Lista rzeczy znalezionych</h1>
-          {(foundItems && foundItems.length > 0) && <List foundItems={foundItems} />}
+          {(foundItems && foundItems.length > 0) && <List foundItems={foundItems} isOfficial={false}/>}
         </div>
       </div>
     </main>
