@@ -16,7 +16,7 @@ export default function List({ foundItems }: { foundItems: IEventItem[] }) {
                 </div>
             {foundItems.map((item) => (
                 <div key={item.id} className="found-list__item">
-                    <div className="found-list__item__cell found-list__item__cell--id">{item.id}</div>
+                    <div className="found-list__item__cell found-list__item__cell--id">{item.issueNumber}</div>
                     <div className="found-list__item__cell found-list__item__cell--name">{item.itemName}</div>
                     <div className="found-list__item__cell found-list__item__cell--description">{item.description}</div>
                     <div className="found-list__item__cell found-list__item__cell--type">{item.type}</div>
