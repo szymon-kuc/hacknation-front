@@ -1,8 +1,8 @@
 'use client'
-import data from "@/app/(public)/found-list/data.json";
+import data from "@/app/(public)/lista-znalezionych/data.json";
 import List from "@/components/List/List";
 import {IEventItem} from "@/types/types";
-import dataExample from "@/app/(public)/found-list/data.json";
+import dataExample from "@/app/(public)/lista-znalezionych/data.json";
 import {useAuth} from "@/context/AuthContext";
 
 const Page = () => {
