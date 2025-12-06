@@ -11,7 +11,7 @@
             "description": "This is a sample item description."
         },
         {
-            "id": 1,
+            "id": 2,
             "name": "Portfel",
             "type": "Portfel",
             "dateFound": "2025-03-07",
@@ -21,7 +21,7 @@
             "description": "This is a sample item description."
         },
         {
-            "id": 1,
+            "id": 3,
             "name": "Iphone 16",
             "type": "Telefon komórkowy",
             "dateFound": "2024-06-01",
@@ -31,7 +31,7 @@
             "description": "This is a sample item description."
         },
         {
-            "id": 1,
+            "id": 4,
             "name": "Samsung galaxy",
             "type": "Telefon komórkowy",
             "dateFound": "2024-06-01",
