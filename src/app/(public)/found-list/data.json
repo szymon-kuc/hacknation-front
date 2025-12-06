@@ -9,6 +9,36 @@
             "voivodeship": "Śląskie",
             "locationFound": "Autobus",
             "description": "This is a sample item description."
+        },
+        {
+            "id": 1,
+            "name": "Portfel",
+            "type": "Portfel",
+            "dateFound": "2025-03-07",
+            "datePublish": "2025-03-07",
+            "voivodeship": "Śląskie",
+            "locationFound": "Autobus",
+            "description": "This is a sample item description."
+        },
+        {
+            "id": 1,
+            "name": "Iphone 16",
+            "type": "Telefon komórkowy",
+            "dateFound": "2024-06-01",
+            "datePublish": "2024-06-02",
+            "voivodeship": "Śląskie",
+            "locationFound": "Autobus",
+            "description": "This is a sample item description."
+        },
+        {
+            "id": 1,
+            "name": "Samsung galaxy",
+            "type": "Telefon komórkowy",
+            "dateFound": "2024-06-01",
+            "datePublish": "2024-06-02",
+            "voivodeship": "Śląskie",
+            "locationFound": "Autobus",
+            "description": "This is a sample item description."
         }
     ]
 }

@@ -4,7 +4,21 @@
 }
 .found-list__item {
   display: grid;
-  grid-template-columns: repeat(8, auto);
+  grid-template-columns: 40px 200px 200px 100px 100px 100px 100px 110px;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  font-size: 14px;
 }
-
-/*# sourceMappingURL=list.css.map */
+.found-list__item--heading {
+  font-weight: 600;
+}
+.found-list__item__cell {
+  display: flex;
+  align-items: center;
+  padding: 10px;
+}
+.found-list__item__cell + .found-list__item__cell {
+  border-left: 1px solid rgba(0, 0, 0, 0.1);
+}
+.found-list__item + .found-list__item {
+  border-top: none;
+}/*# sourceMappingURL=list.css.map */
