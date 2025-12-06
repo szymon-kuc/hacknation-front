@@ -5,4 +5,6 @@
 .found-list__item {
   display: grid;
   grid-template-columns: repeat(8, auto);
-}/*# sourceMappingURL=list.css.map */
+}
+
+/*# sourceMappingURL=list.css.map */
