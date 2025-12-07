@@ -46,15 +46,15 @@ const Login = () => {
       const base = process.env.NEXT_PUBLIC_API_URL?.replace(/\/$/, "") || "";
       const url = `${base}/api/auth/login`;
 
-      const res = await fetch(url, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      // const res = await fetch(url, {
+      //   method: "POST",
+      //   headers: {
+      //     "Content-Type": "application/json",
+      //   },
+      //   body: JSON.stringify({ email, password }),
+      // });
 
-      const data = await res.json().catch(() => ({}));
+      // const data = await res.json().catch(() => ({}));
 
 
       //todo jak będzie api
@@ -88,61 +88,61 @@ const Login = () => {
   };
 
   return (
-    <div className="official-form login-form form">
-      <h2 className="section-title">Logowanie urzędnika</h2>
-      <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-        {({ isSubmitting, isValid, touched, errors }) => (
-          <Form noValidate>
-            {serverError && <div className="error-text" role="alert">{serverError}</div>}
-            {serverSuccess && <div style={{ color: "#2e7d32", fontSize: 14 }}>{serverSuccess}</div>}
+        <div className="official-form login-form form">
+          <h2 className="section-title">Logowanie urzędnika</h2>
+          <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
+            {({ isSubmitting, isValid, touched, errors }) => (
+              <Form noValidate>
+                {serverError && <div className="error-text" role="alert">{serverError}</div>}
+                {serverSuccess && <div style={{ color: "#2e7d32", fontSize: 14 }}>{serverSuccess}</div>}
 
-            <div className="form-row">
-              <label htmlFor="email">E-mail</label>
-              <Field
-                id="email"
-                name="email"
-                type="email"
-                inputMode="email"
-                autoComplete="email"
-                aria-invalid={touched.email && !!errors.email}
-                aria-describedby="email-error"
-                as="input"
-              />
-              <ErrorMessage name="email" render={(msg) => (
-                <div id="email-error" className="error-text">{msg}</div>
-              )} />
-            </div>
+                <div className="form-row">
+                  <label htmlFor="email">E-mail</label>
+                  <Field
+                    id="email"
+                    name="email"
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    aria-invalid={touched.email && !!errors.email}
+                    aria-describedby="email-error"
+                    as="input"
+                  />
+                  <ErrorMessage name="email" render={(msg) => (
+                    <div id="email-error" className="error-text">{msg}</div>
+                  )} />
+                </div>
 
-            <div className="form-row">
-              <label htmlFor="password">Hasło</label>
-              <Field
-                id="password"
-                name="password"
-                type="password"
-                autoComplete="current-password"
-                aria-invalid={touched.password && !!errors.password}
-                aria-describedby="password-error"
-                as="input"
-              />
-              <ErrorMessage name="password" render={(msg) => (
-                <div id="password-error" className="error-text">{msg}</div>
-              )} />
-            </div>
+                <div className="form-row">
+                  <label htmlFor="password">Hasło</label>
+                  <Field
+                    id="password"
+                    name="password"
+                    type="password"
+                    autoComplete="current-password"
+                    aria-invalid={touched.password && !!errors.password}
+                    aria-describedby="password-error"
+                    as="input"
+                  />
+                  <ErrorMessage name="password" render={(msg) => (
+                    <div id="password-error" className="error-text">{msg}</div>
+                  )} />
+                </div>
 
-            {/*<div className="form-row" style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>*/}
-            {/*  <Field id="remember" name="remember" type="checkbox" as="input" />*/}
-            {/*  <label htmlFor="remember" style={{ margin: 0 }}>Zapamiętaj mnie</label>*/}
-            {/*</div>*/}
+                {/*<div className="form-row" style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>*/}
+                {/*  <Field id="remember" name="remember" type="checkbox" as="input" />*/}
+                {/*  <label htmlFor="remember" style={{ margin: 0 }}>Zapamiętaj mnie</label>*/}
+                {/*</div>*/}
 
-            <div className="form-actions">
-              <button type="submit" disabled={isSubmitting || !isValid}>
-                {isSubmitting ? "Logowanie..." : "Zaloguj się"}
-              </button>
-            </div>
-          </Form>
-        )}
-      </Formik>
-    </div>
+                <div className="form-actions">
+                  <button type="submit" className="btn btn-lg btn-primary" disabled={isSubmitting || !isValid}>
+                    {isSubmitting ? "Logowanie..." : "Zaloguj się"}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
+        </div>
   );
 };
 

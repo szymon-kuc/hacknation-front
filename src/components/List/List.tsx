@@ -1,38 +1,77 @@
-import {IEventItem} from "@/types/types";
+import { IEventItem } from "@/types/types";
 import "@/components/List/style/list.css";
 import ListActions from "@/components/ListActions/ListActions";
-import {Dispatch, SetStateAction} from "react";
+import { Dispatch, SetStateAction } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from "@mui/material";
 
-export default function List({foundItems, isOfficial, setFoundItems}: { foundItems: IEventItem[], isOfficial: boolean, setFoundItems?:  Dispatch<SetStateAction<IEventItem[]>> }) {
-    return (
-        <div className="found-list">
-            <div className="found-list__item found-list__item--heading">
-                <div className="found-list__item__cell found-list__item__cell--id">Nr.</div>
-                <div className="found-list__item__cell found-list__item__cell--name">Nazwa</div>
-                <div className="found-list__item__cell found-list__item__cell--description">Opis</div>
-                <div className="found-list__item__cell found-list__item__cell--type">Typ</div>
-                <div className="found-list__item__cell found-list__item__cell--dateFound">Data znalezienia</div>
-                <div className="found-list__item__cell found-list__item__cell--datePublish">Data publikacji</div>
-                <div className="found-list__item__cell found-list__item__cell--locationFound">Miejsce znalezienia</div>
-                <div className="found-list__item__cell found-list__item__cell--voivodeship">Województwo</div>
-                {isOfficial && <div className="found-list__item__cell found-list__item__cell--actions">
-                    Akcje
-                </div>}
-            </div>
+export default function List({
+  foundItems,
+  isOfficial,
+  setFoundItems,
+}: {
+  foundItems: IEventItem[];
+  isOfficial: boolean;
+  setFoundItems?: Dispatch<SetStateAction<IEventItem[]>>;
+}) {
+  //TODO: create this as material ui table component
+  return (
+    <div className="found-list-wrapper">
+      <TableContainer
+        className="found-list-table"
+        component={Paper}
+        sx={{ maxHeight: 500, maxWidth: "100%", stickyHeader: true }}
+      >
+        <Table stickyHeader size="small">
+          <TableHead>
+            <TableRow>
+              <TableCell>Nr.</TableCell>
+              <TableCell className="table-cell-wide">Nazwa</TableCell>
+              <TableCell className="table-cell-wide">Opis</TableCell>
+              <TableCell>Typ</TableCell>
+              <TableCell>Data znalezienia</TableCell>
+              <TableCell>Data publikacji</TableCell>
+              <TableCell>Miejsce znalezienia</TableCell>
+              <TableCell>Województwo</TableCell>
+              {isOfficial && <TableCell align="right">Akcje</TableCell>}
+            </TableRow>
+          </TableHead>
+          <TableBody>
             {foundItems.map((item) => (
-                <div key={item.id} className="found-list__item">
-                    <div className="found-list__item__cell found-list__item__cell--id">{item.issueNumber}</div>
-                    <div className="found-list__item__cell found-list__item__cell--name">{item.itemName}</div>
-                    <div className="found-list__item__cell found-list__item__cell--description">{item.description}</div>
-                    <div className="found-list__item__cell found-list__item__cell--type">{item.type}</div>
-                    <div className="found-list__item__cell found-list__item__cell--dateFound">{item.foundDate}</div>
-                    <div className="found-list__item__cell found-list__item__cell--datePublish">{item.entryDate}</div>
-                    <div
-                        className="found-list__item__cell found-list__item__cell--locationFound">{item.whereFound}</div>
-                    <div className="found-list__item__cell found-list__item__cell--voivodeship">{item.voivodeship}</div>
-                    {isOfficial && <ListActions setFoundItems={setFoundItems} item={item}/>}                    
-                </div>
+              <TableRow key={item.id} hover>
+                <TableCell>{item.issueNumber}</TableCell>
+                <TableCell className="table-cell-wide">
+                  {item.itemName}
+                </TableCell>
+                <TableCell className="table-cell-wide">
+                  {item.description}
+                </TableCell>
+                <TableCell>{item.type}</TableCell>
+                <TableCell className="table-cell-no-wrap">
+                  {item.foundDate}
+                </TableCell>
+                <TableCell className="table-cell-no-wrap">
+                  {item.entryDate}
+                </TableCell>
+                <TableCell>{item.whereFound}</TableCell>
+                <TableCell>{item.voivodeship}</TableCell>
+                {isOfficial && (
+                  <TableCell align="right">
+                    <ListActions setFoundItems={setFoundItems} item={item} />
+                  </TableCell>
+                )}
+              </TableRow>
             ))}
-        </div>
-    )
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
+  );
 }
