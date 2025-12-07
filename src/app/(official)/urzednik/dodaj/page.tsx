@@ -78,9 +78,17 @@ const Page = () => {
                 issuer_id: userId,
             };
 
-                console.log(JSON.stringify(payload));
+            const token =
+                (typeof window !== "undefined" && (localStorage.getItem("token") || localStorage.getItem("authToken"))) ||
+                process.env.NEXT_PUBLIC_TOKEN ||
+                "";
+
+            if (!token) {
+                throw new Error("Brak tokenu autoryzacyjnego. Zaloguj się ponownie.");
+            }
+
             const base = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
-            const url = `${base}/item`;
+            const url = `${base}/api/lost-items`;
 
             const res = await fetch(url, {
                 method: "OPTIONS",
@@ -90,7 +98,7 @@ const Page = () => {
             });
 
             const data = await res.json().catch(() => ({} as any));
-            console.log("USER ID:", userId);
+
             if (!res.ok) {
                 const msg = data?.message || data?.error || `Błąd zapisu (${res.status})`;
                 throw new Error(msg);
@@ -105,51 +113,129 @@ const Page = () => {
         }
     };
 
-    return (
-        <div className="container">
-            <div className="official-form form">
-                <h1 className="section-title">Dodaj przedmiot</h1>
+  return (
+    <div className="container mb-50">
+      <div className="official-form form">
+        <h1 className="section-title">Wprowadź dane:</h1>
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={onSubmit}
+        >
+          {({ isSubmitting, isValid, touched, errors }) => (
+            <Form noValidate>
+              {serverError && (
+                <div className="error-text" role="alert">
+                  {serverError}
+                </div>
+              )}
+              {serverSuccess && (
+                <div style={{ color: "#2e7d32", fontSize: 14 }}>
+                  {serverSuccess}
+                </div>
+              )}
 
-                <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-                    {({ isSubmitting, isValid, touched, errors }) => (
-                        <Form noValidate>
-                            {serverError && <div className="error-text">{serverError}</div>}
-                            {serverSuccess && <div style={{ color: "#2e7d32" }}>{serverSuccess}</div>}
+              <div className="form-row">
+                <label htmlFor="foundDate">Data znalezienia</label>
+                <Field
+                  id="foundDate"
+                  name="foundDate"
+                  type="date"
+                  aria-invalid={touched.foundDate && !!errors.foundDate}
+                  aria-describedby="foundDate-error"
+                  as="input"
+                />
+                <ErrorMessage
+                  name="foundDate"
+                  render={(msg) => (
+                    <div id="foundDate-error" className="error-text">
+                      {msg}
+                    </div>
+                  )}
+                />
+              </div>
 
-                            {/* POLA FORMULARZA */}
-                            {Object.keys(initialValues).map((key) => (
-                                <div className="form-row" key={key}>
-                                    <label htmlFor={key}>{key}</label>
-                                    <Field
-                                        id={key}
-                                        name={key}
-                                        type={
-                                            key.includes("Date")
-                                                ? "date"
-                                                : "text"
-                                        }
-                                        as={key === "description" ? "textarea" : "input"}
-                                        aria-invalid={touched[key as keyof typeof touched] && !!errors[key as keyof typeof errors]}
-                                        aria-describedby={`${key}-error`}
-                                    />
-                                    <ErrorMessage
-                                        name={key}
-                                        render={(msg) => <div id={`${key}-error`} className="error-text">{msg}</div>}
-                                    />
-                                </div>
-                            ))}
+              <div className="form-row">
+                <label htmlFor="category">Kategoria / rodzaj</label>
+                <Field
+                  id="category"
+                  name="category"
+                  type="text"
+                  placeholder="np. Elektronika, Dokumenty, Klucze"
+                  maxLength={MAX.category}
+                  aria-invalid={touched.category && !!errors.category}
+                  aria-describedby="category-error"
+                  as="input"
+                />
+                <ErrorMessage
+                  name="category"
+                  render={(msg) => (
+                    <div id="category-error" className="error-text">
+                      {msg}
+                    </div>
+                  )}
+                />
+              </div>
 
-                            <div className="form-actions">
-                                <button type="submit" disabled={isSubmitting || !isValid}>
-                                    {isSubmitting ? "Wysyłanie..." : "Zapisz"}
-                                </button>
-                            </div>
-                        </Form>
-                    )}
-                </Formik>
-            </div>
-        </div>
-    );
+              <div className="form-row">
+                <label htmlFor="description">Opis</label>
+                <Field
+                  id="description"
+                  name="description"
+                  as="textarea"
+                  rows={4}
+                  placeholder="Krótki opis rzeczy"
+                  maxLength={MAX.description}
+                  aria-invalid={touched.description && !!errors.description}
+                  aria-describedby="description-error"
+                />
+                <ErrorMessage
+                  name="description"
+                  render={(msg) => (
+                    <div id="description-error" className="error-text">
+                      {msg}
+                    </div>
+                  )}
+                />
+              </div>
+
+              <div className="form-row">
+                <label htmlFor="location">Miejsce znalezienia</label>
+                <Field
+                  id="location"
+                  name="location"
+                  type="text"
+                  placeholder="Gdzie znaleziono rzecz"
+                  maxLength={MAX.location}
+                  aria-invalid={touched.location && !!errors.location}
+                  aria-describedby="location-error"
+                  as="input"
+                />
+                <ErrorMessage
+                  name="location"
+                  render={(msg) => (
+                    <div id="location-error" className="error-text">
+                      {msg}
+                    </div>
+                  )}
+                />
+              </div>
+
+              <div className="form-actions">
+                <button
+                  type="submit"
+                  className="btn btn-lg btn-primary"
+                  disabled={isSubmitting || !isValid}
+                >
+                  {isSubmitting ? "Wysyłanie..." : "Zapisz"}
+                </button>
+              </div>
+            </Form>
+          )}
+        </Formik>
+      </div>
+    </div>
+  );
 };
 
 export default Page;

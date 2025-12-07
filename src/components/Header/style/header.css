@@ -1,8 +1,6 @@
 .header {
   width: 100%;
   padding: 30px 40px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
-  margin-bottom: 50px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -16,13 +14,9 @@ header ul li {
 header nav ul {
   display: flex;
   align-items: center;
-  gap: 20px;
-}
-
-header nav ul li a {
-  display: block;
-  color: #000;
-  text-decoration: none;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 10px;
 }
 
 .header-text {

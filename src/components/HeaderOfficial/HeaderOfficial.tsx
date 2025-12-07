@@ -1,28 +1,36 @@
-import '@/components/Header/style/header.css';
+import "@/components/Header/style/header.css";
 import Link from "next/link";
+import WcagBtns from "../WcagBtns/WcagBtns";
 const HeaderOfficial = () => {
-    return (
-        <header className="header">
-            <Link className="header-text" href="/">Biuro rzeczy znalezionych</Link>
-            <nav>
-                <ul>
-                    <li>
-                        <Link href={`/urzednik`}>Lista przedmiotów</Link>
-
-                    </li>
-                    <li>
-                        <Link href={`/urzednik/dodaj`}>Dodoaj przedmiot</Link>
-                    </li>
-                    <li>
-                        <Link href={`/urzednik/import`}>Importuj z pliku</Link>
-                    </li>
-                    <li>
-                        <Link href={`/archiwum`}>Archiwum</Link>
-                    </li>
-                </ul>
-            </nav>
-        </header>
-
-    )
-}
-export default HeaderOfficial
+  return (
+    <header className="header">
+      {/* <Link className="header-text" href="/">Biuro rzeczy znalezionych</Link> */}
+      <WcagBtns />
+      <nav>
+        <ul>
+          <li>
+            <Link className="btn btn-md btn-secondary-link" href={`/archiwum`}>
+              Archiwum
+            </Link>
+          </li>
+          <li>
+            <Link className="btn btn-md btn-secondary-link" href={`/urzednik`}>
+              Lista przedmiotów
+            </Link>
+          </li>
+          <li>
+            <Link className="btn btn-md btn-secondary-reverse" href={`/import`}>
+              Importuj z pliku
+            </Link>
+          </li>
+          <li>
+            <Link className="btn btn-md btn-secondary" href={`/urzednik/dodaj`}>
+              Dodaj przedmiot
+            </Link>
+          </li>
+        </ul>
+      </nav>
+    </header>
+  );
+};
+export default HeaderOfficial;

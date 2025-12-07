@@ -1,27 +1,54 @@
+.found-list-wrapper {
+  width: 100%;
+  overflow: auto;
+  margin-bottom: 50px;
+}
+
 .found-list {
+  width: fit-content;
   display: flex;
   flex-direction: column;
 }
 .found-list__item {
+  width: fit-content;
+  flex-shrink: 0;
   display: flex;
+  font-size: 14px;
 }
 .found-list__item--heading {
   font-weight: 600;
 }
 .found-list__item__cell:first-child {
-  width: 5%;
+  width: 8%;
 }
 .found-list__item__cell {
+  width: fit-content;
   display: flex;
-  width: 13%;
   align-items: center;
   padding: 10px;
+  flex-shrink: 0;
 }
 .found-list__item__cell--actions {
   gap: 10px;
 }
 .found-list__item:nth-child(odd) {
-  background: #eee;
+  background-color: #f5f5f5;
+}
+
+.table-cell-wide {
+  min-width: 150px;
+}
+
+.table-cell-no-wrap {
+  white-space: nowrap;
+}
+
+.found-list-table tbody tr td {
+  color: #000;
+}
+
+.found-list-table * {
+  font-family: "Poppins", sans-serif !important;
 }
 
 /*# sourceMappingURL=list.css.map */

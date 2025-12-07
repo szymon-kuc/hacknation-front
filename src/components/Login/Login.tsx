@@ -114,21 +114,21 @@ const Login = () => {
                             )}/>
                         </div>
 
-                        {/*<div className="form-row" style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>*/}
-                        {/*  <Field id="remember" name="remember" type="checkbox" as="input" />*/}
-                        {/*  <label htmlFor="remember" style={{ margin: 0 }}>Zapamiętaj mnie</label>*/}
-                        {/*</div>*/}
+            {/*<div className="form-row" style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>*/}
+            {/*  <Field id="remember" name="remember" type="checkbox" as="input" />*/}
+            {/*  <label htmlFor="remember" style={{ margin: 0 }}>Zapamiętaj mnie</label>*/}
+            {/*</div>*/}
 
-                        <div className="form-actions">
-                            <button type="submit" disabled={isSubmitting || !isValid}>
-                                {isSubmitting ? "Logowanie..." : "Zaloguj się"}
-                            </button>
-                        </div>
-                    </Form>
-                )}
-            </Formik>
+                <div className="form-actions">
+                  <button type="submit" className="btn btn-lg btn-primary" disabled={isSubmitting || !isValid}>
+                    {isSubmitting ? "Logowanie..." : "Zaloguj się"}
+                  </button>
+                </div>
+              </Form>
+            )}
+          </Formik>
         </div>
-    );
+  );
 };
 
 export default Login;

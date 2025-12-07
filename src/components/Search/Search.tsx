@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 import { IEventItem } from "@/types/types";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
+import SearchIcon from '@mui/icons-material/Search';
 
 export default function Search({setFoundItems}: {setFoundItems: Dispatch<SetStateAction<IEventItem[]>>}) {
     async function search(query: string) {
@@ -43,10 +44,17 @@ export default function Search({setFoundItems}: {setFoundItems: Dispatch<SetStat
             }}
         >
             {({ isSubmitting }) => (
-                <Form>
+                <Form className="form form--search">
+                        <label htmlFor="query">Szukaj</label>
+                    <div className="form-row form-row--row">
                     <Field name="query" />
-                    <ErrorMessage name="query" component="div" />
-                    <button type="submit" disabled={isSubmitting}>Submit</button>
+                    <ErrorMessage className="error-text" name="query" component="div" />
+                    <div className="form-actions">
+                        <button type="submit" className="btn btn-search" disabled={isSubmitting}>
+                                <SearchIcon fontSize="small" />
+                        </button>
+                    </div>
+                    </div>
                 </Form>
             )}
         </Formik>
