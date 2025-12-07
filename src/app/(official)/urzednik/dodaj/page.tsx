@@ -7,6 +7,16 @@ import { useAuth } from "@/context/AuthContext";
 import { notFound } from "next/navigation";
 
 // Sanitizacja
+
+// Limity pól
+const MAX = {
+  category: 100,
+  location: 50,
+  description: 400,
+};
+
+// Prosta funkcja sanityzująca dane (kontrolne znaki, < >, trim)
+
 const sanitize = (v: string) =>
     (v || "")
         .replace(/[\u0000-\u001F\u007F]/g, "")
@@ -163,7 +173,7 @@ const Page = () => {
                   type="text"
                   placeholder="np. Elektronika, Dokumenty, Klucze"
                   maxLength={MAX.category}
-                  aria-invalid={touched.category && !!errors.category}
+                  aria-invalid={touched.type && !!errors.type}
                   aria-describedby="category-error"
                   as="input"
                 />
@@ -207,7 +217,7 @@ const Page = () => {
                   type="text"
                   placeholder="Gdzie znaleziono rzecz"
                   maxLength={MAX.location}
-                  aria-invalid={touched.location && !!errors.location}
+                  aria-invalid={touched.whereFound && !!errors.whereFound}
                   aria-describedby="location-error"
                   as="input"
                 />
