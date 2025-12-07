@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useAuth } from "@/context/AuthContext";
-import { notFound } from "next/navigation";
+import {notFound, unauthorized} from "next/navigation";
 
 // Sanitizacja
 
@@ -13,6 +13,7 @@ const MAX = {
   category: 100,
   location: 50,
   description: 400,
+  issueNumber: 40,
 };
 
 // Prosta funkcja sanityzująca dane (kontrolne znaki, < >, trim)
@@ -23,11 +24,10 @@ const sanitize = (v: string) =>
         .replace(/[<>]/g, "")
         .trim();
 
-// Walidacja
+// Walidacja — tylko dla pól obecnych w initialValues
 const validationSchema = Yup.object({
     itemName: Yup.string().required("Nazwa przedmiotu jest wymagana").max(100),
     description: Yup.string().required("Opis jest wymagany").max(400),
-    documentTransferDate: Yup.string().required("Data przekazania dokumentu jest wymagana"),
     entryDate: Yup.string().required("Data wprowadzenia jest wymagana"),
     foundDate: Yup.string()
         .required("Data znalezienia jest wymagana")
@@ -40,53 +40,56 @@ const validationSchema = Yup.object({
             return selected.getTime() <= today.getTime();
         }),
     issueNumber: Yup.string().required("Numer sprawy jest wymagany"),
-    whereStorred: Yup.string().required("Miejsce przechowania jest wymagane"),
     whereFound: Yup.string().nullable(),
     type: Yup.string().required("Typ jest wymagany"),
-    status: Yup.string().required("Status jest wymagany"),
-    voivodeship: Yup.string().required("Województwo jest wymagane"),
 });
 
 const Page = () => {
-    const { isAuthenticated, userId } = useAuth();
-    if (!isAuthenticated) return notFound();
+    const { isAuthenticated, user } = useAuth();
+    if (!isAuthenticated) return unauthorized();
 
     const [serverError, setServerError] = useState<string | null>(null);
     const [serverSuccess, setServerSuccess] = useState<string | null>(null);
 
+    // Ustawiamy entryDate na aktualną datę systemową (YYYY-MM-DD)
+    const today = new Date();
+    const todayStr = new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+        .toISOString()
+        .slice(0, 10);
+
     const initialValues = {
         itemName: "",
         description: "",
-        documentTransferDate: "",
-        entryDate: "",
         foundDate: "",
-        issueNumber: "",
-        whereStorred: "",
-        whereFound: "",
         type: "",
-        status: "",
-        voivodeship: "",
+        issueNumber: "",
+        whereFound: "",
+        entryDate: todayStr,
     };
 
     const onSubmit = async (values: typeof initialValues, { setSubmitting, resetForm }: any) => {
         setServerError(null);
         setServerSuccess(null);
-
+        console.log("USER", user);
         try {
             const payload = {
                 itemName: sanitize(values.itemName),
                 description: sanitize(values.description),
-                documentTransferDate: sanitize(values.documentTransferDate),
-                entryDate: sanitize(values.entryDate),
-                foundDate: sanitize(values.foundDate),
+                documentTransferDate: new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+                    .toISOString(), //todo
+                entryDate: new Date(today.getTime() - today.getTimezoneOffset() * 60000)
+                    .toISOString(),
+                foundDate: new Date(sanitize(values.foundDate)).toISOString(),
                 issueNumber: sanitize(values.issueNumber),
-                whereStorred: sanitize(values.whereStorred),
+                whereStorred: user.city ?? '', //todo
                 whereFound: sanitize(values.whereFound),
                 type: sanitize(values.type),
-                status: sanitize(values.status),
-                voivodeship: sanitize(values.voivodeship),
-                issuer_id: userId,
+                status: "nowy",
+                voivodeship: user.voivodeship, //todo
+                issuerId: user.id,
             };
+            console.log(JSON.stringify(payload))
+
 
             const token =
                 (typeof window !== "undefined" && (localStorage.getItem("token") || localStorage.getItem("authToken"))) ||
@@ -98,10 +101,10 @@ const Page = () => {
             }
 
             const base = (process.env.NEXT_PUBLIC_API_URL || "").replace(/\/$/, "");
-            const url = `${base}/api/lost-items`;
+            const url = `${base}/item`;
 
             const res = await fetch(url, {
-                method: "OPTIONS",
+                method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify(payload),
@@ -146,6 +149,49 @@ const Page = () => {
               )}
 
               <div className="form-row">
+                <label htmlFor="itemName">Nazwa przedmiotu</label>
+                <Field
+                  id="itemName"
+                  name="itemName"
+                  type="text"
+                  placeholder="Wpisz nazwę przedmiotu"
+                  maxLength={100}
+                  aria-invalid={touched.itemName && !!errors.itemName}
+                  aria-describedby="itemName-error"
+                  as="input"
+                />
+                <ErrorMessage
+                  name="itemName"
+                  render={(msg) => (
+                    <div id="itemName-error" className="error-text">
+                      {msg}
+                    </div>
+                  )}
+                />
+              </div>
+
+              <div className="form-row">
+                <label htmlFor="entryDate">Data wprowadzenia</label>
+                <Field
+                  id="entryDate"
+                  name="entryDate"
+                  type="date"
+                  readOnly
+                  aria-invalid={touched.entryDate && !!errors.entryDate}
+                  aria-describedby="entryDate-error"
+                  as="input"
+                />
+                <ErrorMessage
+                  name="entryDate"
+                  render={(msg) => (
+                    <div id="entryDate-error" className="error-text">
+                      {msg}
+                    </div>
+                  )}
+                />
+              </div>
+
+              <div className="form-row">
                 <label htmlFor="foundDate">Data znalezienia</label>
                 <Field
                   id="foundDate"
@@ -166,21 +212,21 @@ const Page = () => {
               </div>
 
               <div className="form-row">
-                <label htmlFor="category">Kategoria / rodzaj</label>
+                <label htmlFor="type">Kategoria / rodzaj</label>
                 <Field
-                  id="category"
-                  name="category"
+                  id="type"
+                  name="type"
                   type="text"
                   placeholder="np. Elektronika, Dokumenty, Klucze"
                   maxLength={MAX.category}
                   aria-invalid={touched.type && !!errors.type}
-                  aria-describedby="category-error"
+                  aria-describedby="type-error"
                   as="input"
                 />
                 <ErrorMessage
-                  name="category"
+                  name="type"
                   render={(msg) => (
-                    <div id="category-error" className="error-text">
+                    <div id="type-error" className="error-text">
                       {msg}
                     </div>
                   )}
@@ -210,31 +256,53 @@ const Page = () => {
               </div>
 
               <div className="form-row">
-                <label htmlFor="location">Miejsce znalezienia</label>
+                <label htmlFor="whereFound">Miejsce znalezienia</label>
                 <Field
-                  id="location"
-                  name="location"
+                  id="whereFound"
+                  name="whereFound"
                   type="text"
                   placeholder="Gdzie znaleziono rzecz"
                   maxLength={MAX.location}
                   aria-invalid={touched.whereFound && !!errors.whereFound}
-                  aria-describedby="location-error"
+                  aria-describedby="whereFound-error"
                   as="input"
                 />
                 <ErrorMessage
-                  name="location"
+                  name="whereFound"
                   render={(msg) => (
-                    <div id="location-error" className="error-text">
+                    <div id="whereFound-error" className="error-text">
                       {msg}
                     </div>
                   )}
                 />
               </div>
 
+
+                <div className="form-row">
+                    <label htmlFor="issueNumber">Numer sprawy</label>
+                    <Field
+                        id="issueNumber"
+                        name="issueNumber"
+                        type="text"
+                        placeholder="Numer sprawy"
+                        maxLength={MAX.issueNumber}
+                        aria-invalid={touched.issueNumber && !!errors.issueNumber}
+                        aria-describedby="issueNumber-error"
+                        as="input"
+                    />
+                    <ErrorMessage
+                        name="issueNumber"
+                        render={(msg) => (
+                            <div id="issueNumber-error" className="error-text">
+                                {msg}
+                            </div>
+                        )}
+                    />
+                </div>
               <div className="form-actions">
                 <button
                   type="submit"
-                  className="btn btn-lg btn-primary"
+                  className="btn btn-md btn-secondary"
                   disabled={isSubmitting || !isValid}
                 >
                   {isSubmitting ? "Wysyłanie..." : "Zapisz"}

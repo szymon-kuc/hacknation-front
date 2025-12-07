@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import { Formik, Form, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import { useAuth } from "@/context/AuthContext";
-import { notFound } from "next/navigation";
+import {notFound, unauthorized} from "next/navigation";
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
 const ALLOWED_TYPES = [
@@ -30,7 +30,7 @@ const validationSchema = Yup.object({
 
 const Page = () => {
   const { isAuthenticated } = useAuth();
-  if (!isAuthenticated) return notFound();
+  if (!isAuthenticated) return unauthorized();
 
   const [serverError, setServerError] = useState<string | null>(null);
   const [serverSuccess, setServerSuccess] = useState<string | null>(null);

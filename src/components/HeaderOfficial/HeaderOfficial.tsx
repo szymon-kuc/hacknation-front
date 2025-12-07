@@ -9,7 +9,7 @@ const HeaderOfficial = () => {
       <nav>
         <ul>
           <li>
-            <Link className="btn btn-md btn-secondary-link" href={`/archiwum`}>
+            <Link className="btn btn-md btn-secondary-link" href={`/urzednik/archiwum`}>
               Archiwum
             </Link>
           </li>
@@ -19,7 +19,7 @@ const HeaderOfficial = () => {
             </Link>
           </li>
           <li>
-            <Link className="btn btn-md btn-secondary-reverse" href={`/import`}>
+            <Link className="btn btn-md btn-secondary-reverse" href={`/urzednik/import`}>
               Importuj z pliku
             </Link>
           </li>

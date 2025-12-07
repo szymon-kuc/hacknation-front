@@ -21,6 +21,19 @@ export default function List({
   isOfficial: boolean;
   setFoundItems?: Dispatch<SetStateAction<IEventItem[]>>;
 }) {
+  const formatDate = (value?: string | Date | null): string => {
+    if (!value) return "—";
+    const str = typeof value === "string" ? value : value.toString();
+    // treat sentinel/empty values
+    if (str.startsWith("0001-01-01") || str === "0000-00-00") return "—";
+    const d = new Date(str);
+    if (isNaN(d.getTime())) return "—";
+    return new Intl.DateTimeFormat("pl-PL", {
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+    }).format(d);
+  };
   return (
     <div className="found-list-wrapper">
       <TableContainer
@@ -43,7 +56,7 @@ export default function List({
             </TableRow>
           </TableHead>
           <TableBody>
-            {foundItems.map((item) => (
+            {foundItems && foundItems.map((item) => (
               <TableRow key={item.id} hover>
                 <TableCell>{item.issueNumber}</TableCell>
                 <TableCell className="table-cell-wide">
@@ -54,13 +67,13 @@ export default function List({
                 </TableCell>
                 <TableCell>{item.type}</TableCell>
                 <TableCell className="table-cell-no-wrap">
-                  {item.foundDate}
-                </TableCell>
-                <TableCell className="table-cell-no-wrap">
-                  {item.entryDate}
-                </TableCell>
-                <TableCell>{item.whereFound}</TableCell>
-                <TableCell>{item.voivodeship}</TableCell>
+                  {formatDate(item.foundDate as any)}
+              </TableCell>
+              <TableCell className="table-cell-no-wrap">
+                  {formatDate(item.entryDate as any)}
+              </TableCell>
+              <TableCell>{item.whereFound}</TableCell>
+              <TableCell>{item.voivodeship}</TableCell>
                 {isOfficial && (
                   <TableCell align="right">
                     <ListActions setFoundItems={setFoundItems} item={item} />

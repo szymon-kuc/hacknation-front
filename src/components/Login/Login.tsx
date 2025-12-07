@@ -61,7 +61,7 @@ const Login = () => {
                 const msg = data?.message || data?.error || "Błąd logowania. Sprawdź dane i spróbuj ponownie.";
                 throw new Error(msg);
             }
-
+            console.log(data)
             login(data.data);
             setServerSuccess("Zalogowano pomyślnie.");
             resetForm();
@@ -120,7 +120,7 @@ const Login = () => {
             {/*</div>*/}
 
                 <div className="form-actions">
-                  <button type="submit" className="btn btn-lg btn-primary" disabled={isSubmitting || !isValid}>
+                  <button type="submit" className="btn btn-md btn-secondary" disabled={isSubmitting || !isValid}>
                     {isSubmitting ? "Logowanie..." : "Zaloguj się"}
                   </button>
                 </div>

@@ -1,12 +1,21 @@
 'use client'
 import {createContext, useContext, useState} from "react";
 
+interface IUser {
+    id: number;
+    name: string;
+    email: string;
+    surname: string;
+    voivodeship: string;
+    organization: string;
+    city: string;
+}
 // Tworzymy interfejs dla kontekstu
 interface AuthContextType {
     isAuthenticated: boolean;
-    login: (id: number) => void;
+    login: (user: IUser) => void;
     logout: () => void;
-    userId: number;
+    user: IUser;
 }
 
 // Tworzymy kontekst z domyślną wartością
@@ -24,16 +33,16 @@ export const useAuth = () => {
 // Provider dla kontekstu autoryzacji
 export const AuthProvider = ({children}: { children: React.ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-    const [userId, setUserId] = useState<number>(0);
+    const [user, setUser] = useState<IUser>({id: 0, city: "", email: "", surname: "", name: "", organization: "", voivodeship: ""});
 
-    const login = (id: number) => {
+    const login = (user: IUser) => {
         setIsAuthenticated(true)
-        setUserId(id);
+        setUser(user);
     };
     const logout = () => setIsAuthenticated(false);
 
     return (
-        <AuthContext.Provider value={{isAuthenticated, userId, login, logout}}>
+        <AuthContext.Provider value={{isAuthenticated, user, login, logout}}>
             {children}
         </AuthContext.Provider>
     );
