@@ -14,7 +14,7 @@ const HeaderOfficial = () => {
                         <Link href={`/urzednik/dodaj`}>Dodoaj przedmiot</Link>
                     </li>
                     <li>
-                        <Link href={`/import`}>Importuj z pliku</Link>
+                        <Link href={`/urzednik/import`}>Importuj z pliku</Link>
                     </li>
                     <li>
                         <Link href={`/archiwum`}>Archiwum</Link>

@@ -14,7 +14,6 @@ export default function List({foundItems, isOfficial, setFoundItems}: { foundIte
                 <div className="found-list__item__cell found-list__item__cell--dateFound">Data znalezienia</div>
                 <div className="found-list__item__cell found-list__item__cell--datePublish">Data publikacji</div>
                 <div className="found-list__item__cell found-list__item__cell--locationFound">Miejsce znalezienia</div>
-                <div className="found-list__item__cell found-list__item__cell--voivodeship">Województwo</div>
                 {isOfficial && <div className="found-list__item__cell found-list__item__cell--actions">
                     Akcje
                 </div>}
@@ -29,7 +28,6 @@ export default function List({foundItems, isOfficial, setFoundItems}: { foundIte
                     <div className="found-list__item__cell found-list__item__cell--datePublish">{item.entryDate}</div>
                     <div
                         className="found-list__item__cell found-list__item__cell--locationFound">{item.whereFound}</div>
-                    <div className="found-list__item__cell found-list__item__cell--voivodeship">{item.voivodeship}</div>
                     {isOfficial && <ListActions setFoundItems={setFoundItems} item={item}/>}                    
                 </div>
             ))}
